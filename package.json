@@ -1,0 +1,47 @@
+{
+  "name": "my-next-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@404-software/lets-deliver": "^1.0.13",
+    "@mantine/form": "^7.16.1",
+    "browser-image-compression": "^2.0.2",
+    "D": "^1.0.0",
+    "dayjs": "^1.11.13",
+    "email-validator": "^2.0.4",
+    "exceljs": "^4.4.0",
+    "lodash": "^4.17.21",
+    "next": "15.1.5",
+    "react": "^19.0.0",
+    "react-datepicker": "^7.6.0",
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.5",
+    "react-image-crop": "^11.0.7",
+    "react-phone-number-input": "^3.4.11",
+    "react-remove-scroll": "^2.6.2",
+    "react-select": "^5.9.0",
+    "react-toastify": "^11.0.3",
+    "recharts": "^2.15.0",
+    "use-debounce": "^10.0.4"
+  },
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-datepicker": "^7.0.0",
+    "@types/react-dom": "^19",
+    "@types/react-facebook-login": "^4.1.11",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.10",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
