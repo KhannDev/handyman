@@ -20,7 +20,7 @@ export default function Page() {
     },
   });
 
-  const handleSubmit = (data) => {
+  const handleSubmit = (data: any) => {
     axios
       .post(`/categories`, { ...data })
       .then((response) => {

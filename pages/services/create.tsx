@@ -26,7 +26,7 @@ export default function Page() {
     fetchCategories();
   }, []);
 
-  const CreateService = async (data) => {
+  const CreateService = async (data: any) => {
     setLoading(true);
 
     console.log(data);

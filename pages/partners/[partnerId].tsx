@@ -6,7 +6,7 @@ import axios from "@/apis/axios";
 export default function PartnerDetails() {
   const router = useRouter();
   const { partnerId: id } = router.query;
-  const [partner, setPartner] = useState(null);
+  const [partner, setPartner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function PartnerDetails() {
     axios
       .put(`/partners/${id}`, { isVerified: true })
       .then(() => {
-        setPartner((prev) => ({ ...prev, isVerified: true }));
+        setPartner((prev: any) => ({ ...prev, isVerified: true }));
       })
       .catch((error) => {
         console.error("Failed to approve partner:", error);

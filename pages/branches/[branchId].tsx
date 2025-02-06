@@ -30,7 +30,7 @@ export default function ServiceDetails() {
     axios
       .patch(`/services/${id}`, { status: "Accepted" })
       .then(() => {
-        setService((prev) => ({ ...prev, status: "Accepted" }));
+        setService((prev: any) => ({ ...prev, status: "Accepted" }));
       })
       .catch((error) => {
         console.error("Failed to approve service:", error);
@@ -108,7 +108,7 @@ export default function ServiceDetails() {
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-3">Subservices</h2>
           <ul className="list-disc pl-6">
-            {service.subServiceIds.map((sub) => (
+            {service.subServiceIds.map((sub: any) => (
               <li key={sub._id}>
                 <strong>{sub.subservice?.name || "Unknown Subservice"}</strong>{" "}
                 - ${sub.price}

@@ -44,7 +44,7 @@ export default function Page() {
   }, [id, setValues]);
 
   // Submit handler: use PUT for editing, POST for creating
-  const handleSubmit = (data) => {
+  const handleSubmit = (data: any) => {
     setLoading(true);
 
     console.log;

@@ -118,7 +118,9 @@ export default function Page() {
 
   useEffect(() => {
     if (selectedCategory) {
-      const selected = categories.find((cat) => cat._id === selectedCategory);
+      const selected: any = categories.find(
+        (cat: any) => cat._id === selectedCategory
+      );
       setFilteredServices(selected?.serviceIds || []);
     } else {
       setFilteredServices([]);
@@ -181,28 +183,30 @@ export default function Page() {
             ))}
           </select>
 
-          <label>Category:</label>
-          <select
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            value={selectedCategory}
-          >
-            <option value="">Select a category</option>
-            {categories.map((category) => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <div>
+            <select
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={selectedCategory}
+              className="rounded border p-2"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category: any) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {selectedCategory && (
             <div>
-              <label>Service:</label>
               <select
                 onChange={(e) => setSelectedService(e.target.value)}
                 value={selectedService}
+                className="rounded border p-2"
               >
                 <option value="">Select a service</option>
-                {filteredServices.map((service) => (
+                {filteredServices.map((service: any) => (
                   <option key={service._id} value={service._id}>
                     {service.name}
                   </option>
@@ -210,8 +214,11 @@ export default function Page() {
               </select>
             </div>
           )}
+        </div>
 
-          {/* Start Date */}
+        {/* Start Date */}
+
+        <div className="flex flex-wrap gap-4">
           <div className="flex gap-4">
             <div>
               <label htmlFor="start-date" className="mb-2 block">

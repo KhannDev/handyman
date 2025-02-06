@@ -53,7 +53,7 @@ export default function EditServicePage() {
     fetchCategories();
   }, [id]);
 
-  const updateService = async (data) => {
+  const updateService = async (data: any) => {
     setLoading(true);
     try {
       await axios.patch(`/allservices/${id}`, {

@@ -20,7 +20,12 @@ export const logout = async () => {
   return response.data;
 };
 
-export const docsUpload = async (name, fileName, fileExtension, file) => {
+export const docsUpload = async (
+  name: any,
+  fileName: any,
+  fileExtension: any,
+  file: any
+) => {
   try {
     // Step 1: Get the presigned URL from the backend
     const presignedResponse = await axios.post("/partners/uploadDocs", {
@@ -34,7 +39,7 @@ export const docsUpload = async (name, fileName, fileExtension, file) => {
     console.log("Presigned URL:", presignedUrl);
 
     // Step 2: Upload the document to the presigned URL
-    const uploadResponse = await axios.put(presignedUrl, file, {
+    const uploadResponse: any = await axios.put(presignedUrl, file, {
       headers: {
         "Content-Type": file.type, // Use file.type from the File object
       },
@@ -47,7 +52,7 @@ export const docsUpload = async (name, fileName, fileExtension, file) => {
     console.log("File uploaded to:", pathWithoutQuery);
 
     return pathWithoutQuery;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error uploading document:", error.message);
     throw error;
   }
