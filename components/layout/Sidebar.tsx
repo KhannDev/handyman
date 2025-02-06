@@ -41,10 +41,31 @@ export default function Sidebar(props: SidebarProps) {
           />
 
           <MenuItem
-            title="bookings"
+            title="Bookings"
             icon="fa-solid fa-user-tie"
             href="/bookings"
             active={pathname.includes("/bookings")}
+          />
+
+          <MenuItem
+            title="Categories"
+            icon="fa-solid fa-user-tie"
+            href="/categories"
+            active={pathname.includes("/categories")}
+          />
+
+          <MenuItem
+            title="Branches"
+            icon="fa-solid fa-user-tie"
+            href="/branches"
+            active={pathname.includes("/branches")}
+          />
+
+          <MenuItem
+            title="Services"
+            icon="fa-solid fa-user-tie"
+            href="/services"
+            active={pathname.includes("/services")}
           />
 
           {/* <MenuItem

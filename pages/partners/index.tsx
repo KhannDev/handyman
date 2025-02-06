@@ -13,11 +13,14 @@ import dayjs from "dayjs";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 import axios from "@/apis/axios";
+import { useRouter } from "next/router";
 
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
   const [loading, setLoading] = useState<any>(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
+
+  const router = useRouter();
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -46,17 +49,19 @@ export default function Page() {
     fetchCustomers();
   }, [page, limit]);
 
+  console.log(data);
+
   const items = data.customers.map((customer: any) => (
-    <Table.Tr key={customer.id}>
+    <Table.Tr
+      key={customer._id}
+      onClick={() => router.push(`/partners/${customer._id}`)}
+      className="cursor-pointer hover:bg-gray-100"
+    >
       <Table.Td>{customer.name}</Table.Td>
       <Table.Td>{customer.email}</Table.Td>
       <Table.Td>{customer.mobileNumber}</Table.Td>
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>
-        <ActionIcon href={`/users/edit/?id=${customer.id}`}>
-          <i className="fa-solid fa-pen" />
-        </ActionIcon>
-      </Table.Td>
+      <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
     </Table.Tr>
   ));
 
@@ -82,7 +87,7 @@ export default function Page() {
                   <Table.Th>Email</Table.Th>
                   <Table.Th>Mobile Number</Table.Th>
                   <Table.Th>Created At</Table.Th>
-                  <Table.Th>Edit</Table.Th>
+                  <Table.Th>Verified</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

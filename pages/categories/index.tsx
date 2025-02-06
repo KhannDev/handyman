@@ -15,14 +15,14 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import axios from "@/apis/axios";
 
 export default function Page() {
-  const [data, setData] = useState<any>({ customers: [], count: 0 });
+  const [data, setData] = useState<any>({ categories: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/admin/customers", {
+      const response = await axios.get("/categories", {
         params: {
           page,
           limit,
@@ -31,7 +31,7 @@ export default function Page() {
 
       console.log(response.data);
       setData({
-        customers: response.data.users || [],
+        categories: response.data.categories || [],
         count: response.data.total || 0,
       });
     } catch (error: any) {
@@ -46,14 +46,16 @@ export default function Page() {
     fetchCustomers();
   }, [page, limit]);
 
-  const items = data.customers.map((customer: any) => (
+  const items = data.categories.map((customer: any) => (
     <Table.Tr key={customer.id}>
       <Table.Td>{customer.name}</Table.Td>
-      <Table.Td>{customer.email}</Table.Td>
-      <Table.Td>{customer.mobileNumber}</Table.Td>
-      <Table.Td>{customer.gender}</Table.Td>
+
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td></Table.Td>
+      <Table.Td>
+        <ActionIcon href={`/categories/edit/?id=${customer._id}`}>
+          <i className="fa-solid fa-pen" />
+        </ActionIcon>
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -66,8 +68,9 @@ export default function Page() {
       <main className="flex flex-1 flex-col gap-8">
         <PageHeader
           disabled={loading || !data.count}
+          create="/categories/create"
           refetch={fetchCustomers}
-          title={`Customers (${data.count})`}
+          title={`Categories (${data.count})`}
         />
 
         <Loading loading={loading}>
@@ -76,17 +79,16 @@ export default function Page() {
               <Table.Head>
                 <Table.Tr>
                   <Table.Th>Name</Table.Th>
-                  <Table.Th>Email</Table.Th>
-                  <Table.Th>Mobile Number</Table.Th>
-                  <Table.Th>Gender</Table.Th>
+
                   <Table.Th>Created At</Table.Th>
+                  <Table.Th>Edit</Table.Th>
                 </Table.Tr>
               </Table.Head>
 
               <Table.Body>{items}</Table.Body>
             </Table>
           ) : (
-            <Empty name="customer" />
+            <Empty name="Categories" />
           )}
         </Loading>
 

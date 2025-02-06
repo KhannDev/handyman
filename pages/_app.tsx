@@ -1,4 +1,6 @@
 import "@/styles/globals.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";

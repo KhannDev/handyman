@@ -23,6 +23,11 @@ export default function Page() {
   const [startDate, setStartDate] = useState<any>("");
   const [endDate, setEndDate] = useState<any>("");
   const { page, limit, setPage, setLimit } = usePagination(10);
+  const [categories, setCategories] = useState([]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [filteredServices, setFilteredServices] = useState([]);
+  const [selectedService, setSelectedService] = useState("");
   const router = useRouter();
 
   const fetchLists = async () => {
@@ -50,8 +55,12 @@ export default function Page() {
           status: status || undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
+          category: selectedCategory || undefined,
+          serviceId: selectedService || undefined,
         },
       });
+      console.log("Categoryy", selectedCategory, selectedService);
+      console.log(response.data);
 
       setData({
         customers: response.data.bookings || [],
@@ -94,12 +103,27 @@ export default function Page() {
       <Table.Td>{customer.bookingId}</Table.Td>
       <Table.Td>{dayjs(customer.bookedTime).format("DD-MMM-YYYY")}</Table.Td>
       <Table.Td>{dayjs(customer.bookedTime).format("HH:mm")}</Table.Td>
-      <Table.Td>{customer.customerId.name}</Table.Td>
-      <Table.Td>{customer.partnerId.name}</Table.Td>
+      <Table.Td>{customer.customer.name}</Table.Td>
+      <Table.Td>{customer.partner.name}</Table.Td>
       <Table.Td>{customer.status}</Table.Td>
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
     </Table.Tr>
   ));
+
+  useEffect(() => {
+    axios.get("/categories").then((response) => {
+      setCategories(response.data.categories);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const selected = categories.find((cat) => cat._id === selectedCategory);
+      setFilteredServices(selected?.serviceIds || []);
+    } else {
+      setFilteredServices([]);
+    }
+  }, [selectedCategory, categories]);
 
   return (
     <>
@@ -156,6 +180,36 @@ export default function Page() {
               </option>
             ))}
           </select>
+
+          <label>Category:</label>
+          <select
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={selectedCategory}
+          >
+            <option value="">Select a category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          {selectedCategory && (
+            <div>
+              <label>Service:</label>
+              <select
+                onChange={(e) => setSelectedService(e.target.value)}
+                value={selectedService}
+              >
+                <option value="">Select a service</option>
+                {filteredServices.map((service) => (
+                  <option key={service._id} value={service._id}>
+                    {service.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Start Date */}
           <div className="flex gap-4">

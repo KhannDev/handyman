@@ -19,10 +19,10 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
 
-  const fetchCustomers = async () => {
+  const fetchServices = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/admin/customers", {
+      const response = await axios.get("allservices", {
         params: {
           page,
           limit,
@@ -31,7 +31,7 @@ export default function Page() {
 
       console.log(response.data);
       setData({
-        customers: response.data.users || [],
+        customers: response.data.data || [],
         count: response.data.total || 0,
       });
     } catch (error: any) {
@@ -43,31 +43,36 @@ export default function Page() {
   };
 
   useEffect(() => {
-    fetchCustomers();
+    fetchServices();
   }, [page, limit]);
 
   const items = data.customers.map((customer: any) => (
     <Table.Tr key={customer.id}>
       <Table.Td>{customer.name}</Table.Td>
-      <Table.Td>{customer.email}</Table.Td>
-      <Table.Td>{customer.mobileNumber}</Table.Td>
-      <Table.Td>{customer.gender}</Table.Td>
+      <Table.Td>{customer.category.name}</Table.Td>
+      <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
+
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td></Table.Td>
+      <Table.Td>
+        <ActionIcon href={`/services/edit/?id=${customer._id}`}>
+          <i className="fa-solid fa-pen" />
+        </ActionIcon>
+      </Table.Td>
     </Table.Tr>
   ));
 
   return (
     <>
       <Head>
-        <title>Customers - Nasmaakum</title>
+        <title>Services </title>
       </Head>
 
       <main className="flex flex-1 flex-col gap-8">
         <PageHeader
           disabled={loading || !data.count}
-          refetch={fetchCustomers}
-          title={`Customers (${data.count})`}
+          refetch={fetchServices}
+          title={`Services (${data.count})`}
+          create="/services/create"
         />
 
         <Loading loading={loading}>
@@ -76,10 +81,11 @@ export default function Page() {
               <Table.Head>
                 <Table.Tr>
                   <Table.Th>Name</Table.Th>
-                  <Table.Th>Email</Table.Th>
-                  <Table.Th>Mobile Number</Table.Th>
-                  <Table.Th>Gender</Table.Th>
+
+                  <Table.Th>Category</Table.Th>
+                  <Table.Th>Verified</Table.Th>
                   <Table.Th>Created At</Table.Th>
+                  <Table.Th>Edit</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

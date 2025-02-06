@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 
 const BookingDetails = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { bookingId } = router.query;
 

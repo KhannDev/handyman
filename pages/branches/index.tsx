@@ -13,16 +13,17 @@ import dayjs from "dayjs";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 // import axios from "axios";
 import axios from "@/apis/axios";
+import { useRouter } from "next/router";
 
 export default function Page() {
-  const [data, setData] = useState<any>({ customers: [], count: 0 });
+  const [data, setData] = useState<any>({ categories: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/admin/customers", {
+      const response = await axios.get("/services", {
         params: {
           page,
           limit,
@@ -31,7 +32,7 @@ export default function Page() {
 
       console.log(response.data);
       setData({
-        customers: response.data.users || [],
+        categories: response.data.services || [],
         count: response.data.total || 0,
       });
     } catch (error: any) {
@@ -42,32 +43,37 @@ export default function Page() {
     }
   };
 
+  const router = useRouter();
+
   useEffect(() => {
     fetchCustomers();
   }, [page, limit]);
 
-  const items = data.customers.map((customer: any) => (
-    <Table.Tr key={customer.id}>
+  const items = data.categories.map((customer: any) => (
+    <Table.Tr
+      key={customer.id}
+      onClick={() => router.push(`/branches/${customer._id}`)}
+      className="cursor-pointer hover:bg-gray-100"
+    >
       <Table.Td>{customer.name}</Table.Td>
-      <Table.Td>{customer.email}</Table.Td>
-      <Table.Td>{customer.mobileNumber}</Table.Td>
-      <Table.Td>{customer.gender}</Table.Td>
+      <Table.Td>{customer.status}</Table.Td>
+
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td></Table.Td>
     </Table.Tr>
   ));
 
   return (
     <>
       <Head>
-        <title>Customers - Nasmaakum</title>
+        <title>branches</title>
       </Head>
 
       <main className="flex flex-1 flex-col gap-8">
         <PageHeader
           disabled={loading || !data.count}
+          create="/categories/create"
           refetch={fetchCustomers}
-          title={`Customers (${data.count})`}
+          title={`Branches (${data.count})`}
         />
 
         <Loading loading={loading}>
@@ -76,9 +82,8 @@ export default function Page() {
               <Table.Head>
                 <Table.Tr>
                   <Table.Th>Name</Table.Th>
-                  <Table.Th>Email</Table.Th>
-                  <Table.Th>Mobile Number</Table.Th>
-                  <Table.Th>Gender</Table.Th>
+
+                  <Table.Th>Status</Table.Th>
                   <Table.Th>Created At</Table.Th>
                 </Table.Tr>
               </Table.Head>
@@ -86,7 +91,7 @@ export default function Page() {
               <Table.Body>{items}</Table.Body>
             </Table>
           ) : (
-            <Empty name="customer" />
+            <Empty name="Categories" />
           )}
         </Loading>
 
