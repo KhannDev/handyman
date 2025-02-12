@@ -11,14 +11,15 @@ import usePagination from "@/hooks/usePagination";
 import dayjs from "dayjs";
 
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import userExportexcel from "@/components/excel/users";
 // import axios from "axios";
-import axios from "@/apis/axios";
 
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
 
+  const axios = useAxiosPrivate();
   const fetchCustomers = async () => {
     setLoading(true);
     try {
@@ -68,6 +69,16 @@ export default function Page() {
           disabled={loading || !data.count}
           refetch={fetchCustomers}
           title={`Customers (${data.count})`}
+          exportexcel={async () => {
+            const response = await axios.get("/admin/customers", {
+              params: {
+                page: 1,
+                limit: 1000,
+              },
+            });
+
+            userExportexcel(response.data);
+          }}
         />
 
         <Loading loading={loading}>

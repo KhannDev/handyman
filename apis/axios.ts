@@ -5,6 +5,7 @@ const BASE_URL = "http://16.24.77.35:3004";
 
 export default axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 export const axiosPrivate = axios.create({

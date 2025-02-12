@@ -9,8 +9,9 @@ import Table from "@/components/layout/Table";
 import usePagination from "@/hooks/usePagination";
 import dayjs from "dayjs";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import axios from "@/apis/axios";
+// import axios from "@/apis/axios";
 import { useRouter } from "next/router";
+import bookingsExportExcel from "@/components/excel/bookings";
 
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
@@ -30,10 +31,17 @@ export default function Page() {
   const [selectedService, setSelectedService] = useState("");
   const router = useRouter();
 
+  const axios = useAxiosPrivate();
+
   const fetchLists = async () => {
     try {
       const customerResponse = await axios.get("/admin/customers/");
-      const partnerResponse = await axios.get("/admin/partners/");
+      const partnerResponse = await axios.get("/admin/partners/", {
+        params: {
+          page: 1,
+          limit: 100,
+        },
+      });
 
       setCustomerList(customerResponse.data.users || []);
       setPartnerList(partnerResponse.data.partners || []);
@@ -44,6 +52,8 @@ export default function Page() {
 
   const fetchCustomers = async () => {
     setLoading(true);
+
+    console.log(typeof page);
 
     try {
       const response = await axios.get("/admin/bookings", {
@@ -59,8 +69,6 @@ export default function Page() {
           serviceId: selectedService || undefined,
         },
       });
-      console.log("Categoryy", selectedCategory, selectedService);
-      console.log(response.data);
 
       setData({
         customers: response.data.bookings || [],
@@ -102,11 +110,13 @@ export default function Page() {
     <Table.Tr key={customer._id} onClick={() => handleRowClick(customer._id)}>
       <Table.Td>{customer.bookingId}</Table.Td>
       <Table.Td>{dayjs(customer.bookedTime).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>{dayjs(customer.bookedTime).format("HH:mm")}</Table.Td>
+      <Table.Td>{dayjs(customer.bookedTime).format("hh:mm A")}</Table.Td>
       <Table.Td>{customer.customer.name}</Table.Td>
       <Table.Td>{customer.partner.name}</Table.Td>
+      <Table.Td>{customer.service.name}</Table.Td>
       <Table.Td>{customer.status}</Table.Td>
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
+      <Table.Td>{dayjs(customer.createdAt).format("hh:mm A")}</Table.Td>
     </Table.Tr>
   ));
 
@@ -117,15 +127,21 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategory) {
-      const selected: any = categories.find(
-        (cat: any) => cat._id === selectedCategory
-      );
-      setFilteredServices(selected?.serviceIds || []);
-    } else {
-      setFilteredServices([]);
-    }
-  }, [selectedCategory, categories]);
+    axios.get("/services").then((response) => {
+      setFilteredServices(response.data.services);
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   if (selectedCategory) {
+  //     const selected: any = categories.find(
+  //       (cat: any) => cat._id === selectedCategory
+  //     );
+  //     setFilteredServices(selected?.serviceIds || []);
+  //   } else {
+  //     setFilteredServices([]);
+  //   }
+  // }, [selectedCategory, categories]);
 
   return (
     <>
@@ -138,6 +154,22 @@ export default function Page() {
           disabled={loading || !data.count}
           refetch={fetchCustomers}
           title={`Bookings (${data.count})`}
+          exportexcel={async () => {
+            const response = await axios.get("/admin/bookings", {
+              params: {
+                page: 1,
+                limit: 1000,
+                customerId: selectedCustomer || undefined,
+                partnerId: selectedPartner || undefined,
+                status: status || undefined,
+                startDate: startDate || undefined,
+                endDate: endDate || undefined,
+                category: selectedCategory || undefined,
+                serviceId: selectedService || undefined,
+              },
+            });
+            bookingsExportExcel(response.data.bookings);
+          }}
         />
 
         <div className="flex flex-wrap gap-4">
@@ -198,22 +230,22 @@ export default function Page() {
             </select>
           </div>
 
-          {selectedCategory && (
-            <div>
-              <select
-                onChange={(e) => setSelectedService(e.target.value)}
-                value={selectedService}
-                className="rounded border p-2"
-              >
-                <option value="">Select a service</option>
-                {filteredServices.map((service: any) => (
-                  <option key={service._id} value={service._id}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          {/* {selectedCategory && ( */}
+          <div>
+            <select
+              onChange={(e) => setSelectedService(e.target.value)}
+              value={selectedService}
+              className="rounded border p-2"
+            >
+              <option value="">Select a service</option>
+              {filteredServices.map((service: any) => (
+                <option key={service._id} value={service._id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* )} */}
         </div>
 
         {/* Start Date */}
@@ -262,12 +294,14 @@ export default function Page() {
               <Table.Head>
                 <Table.Tr>
                   <Table.Th>Booking ID</Table.Th>
-                  <Table.Th>Date</Table.Th>
+                  <Table.Th>Booking Date</Table.Th>
                   <Table.Th>Time</Table.Th>
                   <Table.Th>Customer Name</Table.Th>
                   <Table.Th>Partner Name</Table.Th>
+                  <Table.Th>Branch Name</Table.Th>
                   <Table.Th>Status</Table.Th>
-                  <Table.Th>Created At</Table.Th>
+                  <Table.Th>Created At(Date)</Table.Th>
+                  <Table.Th>Time</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import axios from "@/apis/axios";
+
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function PartnerDetails() {
   const router = useRouter();
@@ -9,6 +10,7 @@ export default function PartnerDetails() {
   const [partner, setPartner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const axios = useAxiosPrivate();
   useEffect(() => {
     if (id) {
       axios
@@ -27,7 +29,7 @@ export default function PartnerDetails() {
   const handleApprove = () => {
     if (!id) return;
     axios
-      .put(`/partners/${id}`, { isVerified: true })
+      .post(`/admin/updatePartner/${id}`, { isVerified: true })
       .then(() => {
         setPartner((prev: any) => ({ ...prev, isVerified: true }));
       })

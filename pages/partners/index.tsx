@@ -12,8 +12,8 @@ import dayjs from "dayjs";
 
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
-import axios from "@/apis/axios";
 import { useRouter } from "next/router";
+import partnerExportexcel from "@/components/excel/partners";
 
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
@@ -21,6 +21,8 @@ export default function Page() {
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const router = useRouter();
+
+  const axios = useAxiosPrivate();
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -60,7 +62,20 @@ export default function Page() {
       <Table.Td>{customer.name}</Table.Td>
       <Table.Td>{customer.email}</Table.Td>
       <Table.Td>{customer.mobileNumber}</Table.Td>
+
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
+      <Table.Td>{dayjs(customer.createdAt).format("hh:mm A")}</Table.Td>
+      <Table.Td>{customer.approvedBy?.name}</Table.Td>
+      <Table.Td>
+        {customer.approvedDate
+          ? dayjs(customer.approvedDate).format("DD-MMM-YYYY")
+          : ""}
+      </Table.Td>
+      <Table.Td>
+        {customer.approvedDate
+          ? dayjs(customer.approvedDate).format("hh:mm A")
+          : ""}
+      </Table.Td>
       <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
     </Table.Tr>
   ));
@@ -76,6 +91,15 @@ export default function Page() {
           disabled={loading || !data.count}
           refetch={fetchCustomers}
           title={`Partners (${data.count})`}
+          exportexcel={async () => {
+            const response = await axios.get("/admin/partners", {
+              params: {
+                page: 1,
+                limit: 1000,
+              },
+            });
+            partnerExportexcel(response.data.partners);
+          }}
         />
 
         <Loading loading={loading}>
@@ -83,11 +107,15 @@ export default function Page() {
             <Table className="w-full">
               <Table.Head>
                 <Table.Tr>
-                  <Table.Th>Name</Table.Th>
+                  <Table.Th>Partner Name</Table.Th>
                   <Table.Th>Email</Table.Th>
                   <Table.Th>Mobile Number</Table.Th>
-                  <Table.Th>Created At</Table.Th>
-                  <Table.Th>Verified</Table.Th>
+                  <Table.Th>Created At(Date)</Table.Th>
+                  <Table.Th>Time</Table.Th>
+                  <Table.Th>Approved By</Table.Th>
+                  <Table.Th>Approval Date</Table.Th>
+                  <Table.Th>Time</Table.Th>
+                  <Table.Th>Active</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

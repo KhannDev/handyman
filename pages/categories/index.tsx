@@ -13,11 +13,22 @@ import dayjs from "dayjs";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 // import axios from "axios";
 import axios from "@/apis/axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Page() {
   const [data, setData] = useState<any>({ categories: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
+
+  const { permissions } = useAuth();
+  console.log("Permissions", permissions);
+
+  // Function to check if the user has permission
+  const hasPermission = (permissionName: string) => {
+    return permissions?.some(
+      (perm: any) => perm.name === permissionName && perm.isAllowed
+    );
+  };
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -51,11 +62,14 @@ export default function Page() {
       <Table.Td>{customer.name}</Table.Td>
 
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>
-        <ActionIcon href={`/categories/edit/?id=${customer._id}`}>
-          <i className="fa-solid fa-pen" />
-        </ActionIcon>
-      </Table.Td>
+
+      {hasPermission("edit:categories") && (
+        <Table.Td>
+          <ActionIcon href={`/categories/edit/?id=${customer._id}`}>
+            <i className="fa-solid fa-pen" />
+          </ActionIcon>
+        </Table.Td>
+      )}
     </Table.Tr>
   ));
 
@@ -68,7 +82,9 @@ export default function Page() {
       <main className="flex flex-1 flex-col gap-8">
         <PageHeader
           disabled={loading || !data.count}
-          create="/categories/create"
+          create={
+            hasPermission("edit:categories") ? "/categories/create" : undefined
+          }
           refetch={fetchCustomers}
           title={`Categories (${data.count})`}
         />
@@ -81,7 +97,9 @@ export default function Page() {
                   <Table.Th>Name</Table.Th>
 
                   <Table.Th>Created At</Table.Th>
-                  <Table.Th>Edit</Table.Th>
+                  {hasPermission("edit:categories") && (
+                    <Table.Th>Edit</Table.Th>
+                  )}
                 </Table.Tr>
               </Table.Head>
 

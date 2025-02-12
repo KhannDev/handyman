@@ -10,48 +10,57 @@ export function useAuth() {
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [auth, setAuth] = useState<AuthProps | null>(null);
   const [loading, setLoading] = useState(true);
-
   const router = useRouter();
   const { return: returnRoute } = router.query;
   const inLoginPage = router.pathname === "/login";
+  const inDeleteAccountPage = router.pathname === "/delete-account";
+
+  const isLoggedIn = !!auth;
+  const token = auth?.token || null;
+  const role = auth?.role?.name || null;
+  const permissions: any = auth?.role?.permissions || null;
 
   useEffect(() => {
-    const inDeleteAccountPage = router.pathname === "/delete-account";
-    const auth = localStorage.getItem("authToken");
-    if (!auth) {
-      if (!inDeleteAccountPage)
-        if (!inLoginPage) router.push(`/login/?return=${router.pathname}`);
-
+    const storedAuth = localStorage.getItem("auth");
+    if (!storedAuth) {
+      if (!inDeleteAccountPage && !inLoginPage) {
+        router.push(`/login/?return=${router.pathname}`);
+      }
       setLoading(false);
-
       return;
     }
-    console.log(auth);
-    setAuth(JSON.parse(auth) as AuthProps);
+
+    try {
+      setAuth(JSON.parse(storedAuth) as AuthProps);
+    } catch (error) {
+      console.error("Error parsing auth data", error);
+      localStorage.removeItem("auth");
+      setAuth(null);
+    }
 
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) return;
-
-    if (inLoginPage) setLoading(false);
-  }, [router.pathname]);
+    if (!isLoggedIn && inLoginPage) {
+      setLoading(false);
+    }
+  }, [router.pathname, isLoggedIn]);
 
   const logout = () => {
     setAuth(null);
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("auth");
     router.push("/login");
   };
 
-  const login = (auth: AuthProps) => {
-    setAuth(auth);
-    localStorage.setItem("authToken", JSON.stringify(auth));
+  const login = (authData: AuthProps) => {
+    console.log("AUTHH", authData);
+    setAuth(authData);
+    localStorage.setItem("auth", JSON.stringify(authData)); // Store the full object
     router.push(returnRoute ? returnRoute.toString() : "/");
   };
 
-  const token = auth || null;
-  const isLoggedIn = !!auth;
+  console.log("Role permission", token, role, permissions);
 
   return (
     <AuthContext.Provider
@@ -61,6 +70,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         login,
         logout,
         token,
+        role,
+        permissions,
       }}
     >
       {loading ? null : children}
@@ -68,13 +79,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-type AuthProps = { token: string };
+type AuthProps = {
+  token: string;
+  role?: { name: string; permissions?: string[] };
+};
 
 type AuthContextType = {
-  token: AuthProps | null;
-  isLoggedIn?: boolean | null;
+  token: string | null;
+  role?: string | null;
+  permissions?: string[] | null;
+  isLoggedIn: boolean;
   logout: () => void;
-  login: ({ token }: AuthProps) => void;
+  login: (auth: AuthProps) => void;
   authLoading: boolean;
 };
 

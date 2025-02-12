@@ -1,13 +1,28 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import axios from "@/apis/axios";
+
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { toast } from "react-toastify";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ServiceDetails() {
   const router = useRouter();
   const { branchId: id } = router.query;
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const axios = useAxiosPrivate();
+
+  const { permissions } = useAuth();
+  console.log("Permissions", permissions);
+
+  // Function to check if the user has permission
+  const hasPermission = (permissionName: string) => {
+    return permissions?.some(
+      (perm: any) => perm.name === permissionName && perm.isAllowed
+    );
+  };
 
   useEffect(() => {
     if (id) {
@@ -25,12 +40,13 @@ export default function ServiceDetails() {
     }
   }, [id]);
 
-  const handleApprove = () => {
+  const handleApprove = (status: string) => {
     if (!id) return;
     axios
-      .patch(`/services/${id}`, { status: "Accepted" })
+      .post(`/admin/updateService/${id}`, { status: status })
       .then(() => {
-        setService((prev: any) => ({ ...prev, status: "Accepted" }));
+        setService((prev: any) => ({ ...prev, status: status }));
+        toast.success("Status Succesfully Updated");
       })
       .catch((error) => {
         console.error("Failed to approve service:", error);
@@ -45,13 +61,21 @@ export default function ServiceDetails() {
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Service Details</h1>
-        {service.status === "Review" && (
-          <button
-            onClick={handleApprove}
-            className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
-          >
-            Approve
-          </button>
+        {hasPermission("edit:branches") && service.status === "Review" && (
+          <div>
+            <button
+              onClick={() => handleApprove("Accepted")}
+              className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() => handleApprove("Rejected")}
+              className="px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+            >
+              Reject
+            </button>
+          </div>
         )}
       </div>
 

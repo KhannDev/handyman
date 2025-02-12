@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "@/apis/axios";
+
 import { toast } from "react-toastify";
 import Button from "@/components/form/Button";
 import Head from "next/head";
@@ -8,60 +8,62 @@ import PageHeader from "@/components/layout/PageHeader";
 import TextInput from "@/components/form/TextInput";
 import useForm from "@/hooks/useForm";
 import Select from "@/components/form/Select";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function EditServicePage() {
   const router = useRouter();
   const { id } = router.query;
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [roles, setRoles] = useState([]);
 
   const { onSubmit, getInputProps, setValues } = useForm({
     initialValues: {
       name: "",
-      category: "",
-      isVerified: "false",
+      email: "",
+      adminRole: "",
     },
   });
+
+  const axios = useAxiosPrivate();
 
   useEffect(() => {
     if (!id) return;
 
-    const fetchService = async () => {
+    const fetchAdmin = async () => {
       try {
-        const response = await axios.get(`/allservices/${id}`);
-        const { name, category, isVerified } = response.data;
+        const response = await axios.get(`/admin/${id}`);
+        const { name, email, adminRole } = response.data;
         setValues({
           name,
-          category: category?._id || "",
-          isVerified: isVerified ? "true" : "false",
+          email,
+          adminRole: adminRole?._id || "",
         });
       } catch (error) {
         console.error("Failed to fetch service details:", error);
       }
     };
 
-    const fetchCategories = async () => {
+    const fetchRoles = async () => {
       try {
-        const response = await axios.get("/categories");
-        setCategories(response.data.categories);
+        const response = await axios.get("/adminRoles");
+        setRoles(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
     };
 
-    fetchService();
-    fetchCategories();
+    fetchAdmin();
+    fetchRoles();
   }, [id]);
 
   const updateService = async (data: any) => {
     setLoading(true);
+
+    console.log("DAAATAA", data);
     try {
-      await axios.patch(`/allservices/${id}`, {
-        ...data,
-        isVerified: data.isVerified === "true",
-      });
+      await axios.patch(`/admin/${id}`, data);
       toast.success("Service updated successfully!");
-      router.push("/services");
+      router.push("/admins");
     } catch (error) {
       console.error("Failed to update service:", error);
     } finally {
@@ -69,14 +71,21 @@ export default function EditServicePage() {
     }
   };
 
-  const handleApprove = () => {
-    if (!id) return;
-    axios
-      .put(`/allservices/${id}`, { isVerified: true })
-      .then(() => {})
-      .catch((error) => {
-        console.error("Failed to approve partner:", error);
-      });
+  // Delete admin function
+  const deleteAdmin = async () => {
+    if (confirm("Are you sure you want to delete this admin?")) {
+      setLoading(true);
+      try {
+        await axios.delete(`/admin/${id}`);
+        toast.success("Admin deleted successfully!");
+        router.push("/admins"); // Redirect after deletion
+      } catch (error) {
+        console.error("Failed to delete admin:", error);
+        toast.error("Failed to delete admin.");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -87,14 +96,6 @@ export default function EditServicePage() {
 
       <main className="flex flex-1 flex-col gap-8">
         <PageHeader title="Edit Service" />
-        {/* {!getInputProps("isVerified") && (
-          <button
-            onClick={handleApprove}
-            className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
-          >
-            Approve
-          </button>
-        )} */}
 
         <form
           className="flex flex-1 flex-col gap-4"
@@ -106,31 +107,34 @@ export default function EditServicePage() {
             required
             {...getInputProps("name")}
           />
+          <TextInput
+            disabled={loading}
+            label="email"
+            required
+            {...getInputProps("email")}
+          />
 
           <Select
             disabled={loading}
-            label="Category"
-            options={categories.map(({ _id, name }) => ({
+            label="Role"
+            options={roles.map(({ _id, name }) => ({
               label: name,
               value: _id,
             }))}
             required
-            {...getInputProps("category")}
+            {...getInputProps("adminRole")}
           />
 
-          <Select
-            disabled={loading}
-            label="Active"
-            options={[
-              { label: "Yes", value: "true" },
-              { label: "No", value: "false" },
-            ]}
-            required
-            {...getInputProps("isVerified")}
-          />
-
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex justify-end gap-4">
             <Button type="submit">Update</Button>
+            <Button
+              type="button"
+              onClick={deleteAdmin}
+              disabled={loading}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </Button>
           </div>
         </form>
       </main>

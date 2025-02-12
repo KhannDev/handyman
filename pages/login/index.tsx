@@ -35,9 +35,9 @@ export default function Page() {
       console.log(response);
 
       // Assuming login is successful
-      if (response.data?.token) {
+      if (response.data?.data) {
         toast.success("Login successful!");
-        loginToApp(response.data.token); // Update the auth context
+        loginToApp(response.data.data); // Update the auth context
         router.push(returnRoute?.toString() || "/");
       } else {
         toast.error(response.data?.message || "Login failed");

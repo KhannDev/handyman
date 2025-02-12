@@ -13,11 +13,22 @@ import dayjs from "dayjs";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 // import axios from "axios";
 import axios from "@/apis/axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
+
+  const { permissions } = useAuth();
+  console.log("Permissions", permissions);
+
+  // Function to check if the user has permission
+  const hasPermission = (permissionName: string) => {
+    return permissions?.some(
+      (perm: any) => perm.name === permissionName && perm.isAllowed
+    );
+  };
 
   const fetchServices = async () => {
     setLoading(true);
@@ -53,11 +64,13 @@ export default function Page() {
       <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
 
       <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>
-        <ActionIcon href={`/services/edit/?id=${customer._id}`}>
-          <i className="fa-solid fa-pen" />
-        </ActionIcon>
-      </Table.Td>
+      {hasPermission("edit:services") && (
+        <Table.Td>
+          <ActionIcon href={`/services/edit/?id=${customer._id}`}>
+            <i className="fa-solid fa-pen" />
+          </ActionIcon>
+        </Table.Td>
+      )}
     </Table.Tr>
   ));
 
@@ -72,7 +85,9 @@ export default function Page() {
           disabled={loading || !data.count}
           refetch={fetchServices}
           title={`Services (${data.count})`}
-          create="/services/create"
+          create={
+            hasPermission("edit:services") ? "/services/create" : undefined
+          }
         />
 
         <Loading loading={loading}>
@@ -83,9 +98,9 @@ export default function Page() {
                   <Table.Th>Name</Table.Th>
 
                   <Table.Th>Category</Table.Th>
-                  <Table.Th>Verified</Table.Th>
+                  <Table.Th>Active</Table.Th>
                   <Table.Th>Created At</Table.Th>
-                  <Table.Th>Edit</Table.Th>
+                  {hasPermission("edit:services") && <Table.Th>Edit</Table.Th>}
                 </Table.Tr>
               </Table.Head>
 

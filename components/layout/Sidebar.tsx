@@ -1,15 +1,25 @@
 import { useRouter } from "next/router";
 import MenuItem from "../MenuItem";
 import React, { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Sidebar(props: SidebarProps) {
   const { showSidebar, setShowSidebar } = props;
-
+  const { role, permissions } = useAuth();
   const { pathname } = useRouter();
 
   useEffect(() => {
     setShowSidebar(false);
   }, [pathname]);
+
+  console.log("Permissions", permissions);
+
+  // Function to check if the user has permission
+  const hasPermission = (permissionName: string) => {
+    return permissions?.some(
+      (perm: any) => perm.name === permissionName && perm.isAllowed
+    );
+  };
 
   return (
     <div
@@ -26,196 +36,68 @@ export default function Sidebar(props: SidebarProps) {
             href="/"
           />
 
-          <MenuItem
-            active={pathname.includes("/users")}
-            href="/users"
-            icon="fa-solid fa-users"
-            title="Users"
-          />
+          {hasPermission("view:admins") && (
+            <MenuItem
+              active={pathname.includes("/admins")}
+              href="/admins"
+              icon="fa-solid fa-users"
+              title="Manage Access"
+            />
+          )}
 
-          <MenuItem
-            title="Partners"
-            icon="fa-solid fa-user-tie"
-            href="/partners"
-            active={pathname.includes("/partners")}
-          />
+          {hasPermission("view:users") && (
+            <MenuItem
+              active={pathname.includes("/users")}
+              href="/users"
+              icon="fa-solid fa-users"
+              title="Users"
+            />
+          )}
 
-          <MenuItem
-            title="Bookings"
-            icon="fa-solid fa-user-tie"
-            href="/bookings"
-            active={pathname.includes("/bookings")}
-          />
+          {hasPermission("view:partners") && (
+            <MenuItem
+              title="Partners"
+              icon="fa-solid fa-user-tie"
+              href="/partners"
+              active={pathname.includes("/partners")}
+            />
+          )}
 
-          <MenuItem
-            title="Categories"
-            icon="fa-solid fa-user-tie"
-            href="/categories"
-            active={pathname.includes("/categories")}
-          />
+          {hasPermission("view:bookings") && (
+            <MenuItem
+              title="Bookings"
+              icon="fa-solid fa-calendar-check"
+              href="/bookings"
+              active={pathname.includes("/bookings")}
+            />
+          )}
 
-          <MenuItem
-            title="Branches"
-            icon="fa-solid fa-user-tie"
-            href="/branches"
-            active={pathname.includes("/branches")}
-          />
+          {hasPermission("view:categories") && (
+            <MenuItem
+              title="Categories"
+              icon="fa-solid fa-list"
+              href="/categories"
+              active={pathname.includes("/categories")}
+            />
+          )}
 
-          <MenuItem
-            title="Services"
-            icon="fa-solid fa-user-tie"
-            href="/services"
-            active={pathname.includes("/services")}
-          />
+          {hasPermission("view:branches") && (
+            <MenuItem
+              title="Branches"
+              icon="fa-solid fa-building"
+              href="/branches"
+              active={pathname.includes("/branches")}
+            />
+          )}
 
-          {/* <MenuItem
-            active={pathname.includes("/information")}
-            icon="fa-solid fa-info-circle"
-            title="Information"
-          >
-            <MenuItem.SubItem
-              active={pathname === "/information/about"}
-              href="/information/about"
-              title="About"
+          {hasPermission("view:services") && (
+            <MenuItem
+              title="Services"
+              icon="fa-solid fa-concierge-bell"
+              href="/services"
+              active={pathname.includes("/services")}
             />
-
-            <MenuItem.SubItem
-              active={pathname === "/information/privacy-policy"}
-              href="/information/privacy-policy"
-              title="Privacy Policy"
-            />
-
-            <MenuItem.SubItem
-              active={pathname === "/information/terms-of-use"}
-              href="/information/terms-of-use"
-              title="Terms of Use"
-            />
-
-            <MenuItem.SubItem
-              active={pathname === "/information/frequently-asked-questions"}
-              href="/information/frequently-asked-questions"
-              title="FAQs"
-            />
-          </MenuItem>
-          <MenuItem
-            title="Reports"
-            icon="fas fa-file-text"
-            active={pathname.includes("/reports")}
-          >
-            <MenuItem.SubItem
-              title="Call logs"
-              href="/reports/call-logs"
-              active={pathname === "/reports/call-logs"}
-            />
-            <MenuItem.SubItem
-              title="Login"
-              href="/reports/login"
-              active={
-                pathname === "/reports/login" ||
-                pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Active/Inactive"
-              href="/reports/activity"
-              active={
-                pathname === "/reports/activity" ||
-                pathname === "/reports/activity/dates" ||
-                pathname === "/reports/activity/toggledata"
-              }
-            />
-
-            <MenuItem.SubItem
-              title="Privacy Policy"
-              href="/reports/privacy"
-              active={
-                pathname === "/reports/privacy" ||
-                pathname === "/reports/privacy/userPrivacy"
-              }
-            />
-            <MenuItem.SubItem
-              title="Terms of Use"
-              href="/reports/terms"
-              active={
-                pathname === "/reports/terms" ||
-                pathname === "/reports/terms/userTerms"
-              }
-            />
-          </MenuItem>
-          <MenuItem
-            title="Notifications"
-            icon="fas fa-bell"
-            active={pathname.includes("/notifications")}
-            href="/notifications"
-          ></MenuItem>
-          <MenuItem
-            title="Misc"
-            icon="fa-solid fa-star"
-            active={pathname.includes("/misc")}
-          >
-            <MenuItem.SubItem
-              title="Banner-Audio"
-              href="/misc/banner/banner-audio"
-              active={
-                pathname === "/misc/banner"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Banner-Video"
-              href="/misc/banner/banner-video"
-              active={
-                pathname === "/misc/banner"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Cancelled Appointments"
-              href="/misc/Appointment/cancelledAppointments"
-              active={
-                pathname === "/misc/Appointment/cancelledAppointments"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Deleted Users"
-              href="/misc/deletedUsers"
-              active={
-                pathname === "/misc/deletedUsers"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Admin History"
-              href="/misc/adminHistory"
-              active={
-                pathname === "/misc/adminHistory"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-          </MenuItem>
-          <MenuItem
-            title="Tutorial"
-            icon="fas fa-video"
-            active={pathname.includes("/content")}
-          >
-            <MenuItem.SubItem
-              title="Labels"
-              href="/content/categories"
-              active={
-                pathname === "/content/categories"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-            <MenuItem.SubItem
-              title="Content"
-              href="/content"
-              active={
-                pathname === "/content"
-                // pathname === "/reports/login/userLogin"
-              }
-            />
-          </MenuItem> */}
+          )}
         </div>
       </div>
 
