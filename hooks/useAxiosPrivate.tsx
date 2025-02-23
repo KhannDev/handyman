@@ -11,9 +11,12 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config: any) => {
-        if (!config?.headers) {
-          config.headers["x-access-token"] = `${token}`;
-        }
+        console.log("config", config);
+
+        console.log("setting the headers");
+        config.headers["x-access-token"] = `${token}`;
+
+        console.log(config);
         return config;
       },
       (error) => Promise.reject(error)
