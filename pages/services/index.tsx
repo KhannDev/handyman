@@ -21,7 +21,6 @@ export default function Page() {
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const { permissions } = useAuth();
-  console.log("Permissions", permissions);
 
   // Function to check if the user has permission
   const hasPermission = (permissionName: string) => {
@@ -61,6 +60,7 @@ export default function Page() {
     <Table.Tr key={customer.id}>
       <Table.Td>{customer.name}</Table.Td>
       <Table.Td>{customer.category.name}</Table.Td>
+      <Table.Td>{customer?.createdBy?.name}</Table.Td>
       <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
 
       <Table.Td>
@@ -100,6 +100,7 @@ export default function Page() {
                   <Table.Th>Name</Table.Th>
 
                   <Table.Th>Category</Table.Th>
+                  <Table.Th>Created By</Table.Th>
                   <Table.Th>Active</Table.Th>
                   <Table.Th>Created At</Table.Th>
                   {hasPermission("edit:services") && <Table.Th>Edit</Table.Th>}

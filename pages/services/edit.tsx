@@ -14,6 +14,7 @@ export default function EditServicePage() {
   const { id } = router.query;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { onSubmit, getInputProps, setValues } = useForm({
     initialValues: {
@@ -69,15 +70,32 @@ export default function EditServicePage() {
     }
   };
 
-  const handleApprove = () => {
+  const handleDelete = () => {
     if (!id) return;
+    if (!confirm("Are you sure you want to delete this service?")) return;
+    setDeleteLoading(true);
     axios
-      .put(`/allservices/${id}`, { isVerified: true })
-      .then(() => {})
+      .delete(`/allservices/${id}`)
+      .then((response) => {
+        toast.success("service deleted successfully");
+        router.back();
+      })
       .catch((error) => {
-        console.error("Failed to approve partner:", error);
-      });
+        console.error("Error deleting service:", error);
+        toast.error("Failed to delete service");
+      })
+      .finally(() => setDeleteLoading(false));
   };
+
+  // const handleApprove = () => {
+  //   if (!id) return;
+  //   axios
+  //     .put(`/allservices/${id}`, { isVerified: true })
+  //     .then(() => {})
+  //     .catch((error) => {
+  //       console.error("Failed to approve partner:", error);
+  //     });
+  // };
 
   return (
     <>
@@ -129,7 +147,16 @@ export default function EditServicePage() {
             {...getInputProps("isVerified")}
           />
 
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex justify-end space-x-4">
+            {id && (
+              <Button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? "Deleting..." : "Delete"}
+              </Button>
+            )}
             <Button type="submit">Update</Button>
           </div>
         </form>

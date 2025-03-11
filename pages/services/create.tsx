@@ -31,12 +31,13 @@ export default function Page() {
 
     console.log(data);
     try {
-      const response = await axios.post("allservices", {
+      const response = await axios.post("admin/createAllService", {
         ...data,
         isVerified: true,
       });
 
       console.log(response.data);
+      toast.success("Service Created Successfully");
     } catch (error: any) {
       console.error("Failed to Create Services:", error?.data?.message);
     } finally {
