@@ -62,16 +62,14 @@ export default function Sidebar(props: SidebarProps) {
               active={pathname.includes("/partners")}
             />
           )}
-
-          {hasPermission("view:bookings") && (
+          {hasPermission("view:branches") && (
             <MenuItem
-              title="Bookings"
-              icon="fa-solid fa-calendar-check"
-              href="/bookings"
-              active={pathname.includes("/bookings")}
+              title="Branches"
+              icon="fa-solid fa-building"
+              href="/branches"
+              active={pathname.includes("/branches")}
             />
           )}
-
           {hasPermission("view:categories") && (
             <MenuItem
               title="Categories"
@@ -81,21 +79,21 @@ export default function Sidebar(props: SidebarProps) {
             />
           )}
 
-          {hasPermission("view:branches") && (
-            <MenuItem
-              title="Branches"
-              icon="fa-solid fa-building"
-              href="/branches"
-              active={pathname.includes("/branches")}
-            />
-          )}
-
           {hasPermission("view:services") && (
             <MenuItem
               title="Services"
               icon="fa-solid fa-concierge-bell"
               href="/services"
               active={pathname.includes("/services")}
+            />
+          )}
+
+          {hasPermission("view:bookings") && (
+            <MenuItem
+              title="Bookings"
+              icon="fa-solid fa-calendar-check"
+              href="/bookings"
+              active={pathname.includes("/bookings")}
             />
           )}
         </div>

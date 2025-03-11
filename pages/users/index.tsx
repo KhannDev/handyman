@@ -53,7 +53,9 @@ export default function Page() {
       <Table.Td>{customer.email}</Table.Td>
       <Table.Td>{customer.mobileNumber}</Table.Td>
       <Table.Td>{customer.gender}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
       <Table.Td></Table.Td>
     </Table.Tr>
   ));

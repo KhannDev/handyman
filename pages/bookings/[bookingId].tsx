@@ -20,6 +20,8 @@ const BookingDetails = () => {
           const response = await axios.get(
             `/services/appointment/${bookingId}`
           );
+
+          console.log(response.data);
           setBookingDetails(response.data);
         } catch (error) {
           console.error("Failed to fetch booking details:", error);

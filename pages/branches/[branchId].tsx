@@ -15,7 +15,6 @@ export default function ServiceDetails() {
   const axios = useAxiosPrivate();
 
   const { permissions } = useAuth();
-  console.log("Permissions", permissions);
 
   // Function to check if the user has permission
   const hasPermission = (permissionName: string) => {

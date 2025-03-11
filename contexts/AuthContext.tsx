@@ -60,8 +60,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     router.push(returnRoute ? returnRoute.toString() : "/");
   };
 
-  console.log("Role permission", token, role, permissions);
-
   return (
     <AuthContext.Provider
       value={{

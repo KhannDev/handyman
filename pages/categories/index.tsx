@@ -61,7 +61,16 @@ export default function Page() {
     <Table.Tr key={customer.id}>
       <Table.Td>{customer.name}</Table.Td>
 
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
+
+      <Table.Td>{customer.approvedBy?.name}</Table.Td>
+      <Table.Td>
+        {customer.approvedDate
+          ? dayjs(customer.approvedDate).format("DD-MMM-YYYY hh:mm A")
+          : ""}
+      </Table.Td>
 
       {hasPermission("edit:categories") && (
         <Table.Td>
@@ -97,6 +106,9 @@ export default function Page() {
                   <Table.Th>Name</Table.Th>
 
                   <Table.Th>Created At</Table.Th>
+
+                  <Table.Th>Created By</Table.Th>
+                  <Table.Th>Creation Date</Table.Th>
                   {hasPermission("edit:categories") && (
                     <Table.Th>Edit</Table.Th>
                   )}

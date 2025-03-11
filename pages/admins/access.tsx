@@ -125,42 +125,47 @@ const PermissionsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {roles.map((role: Role) => (
-            <tr key={role._id} className="border">
-              <td className="border p-2 font-bold">{role.name}</td>
-              {permissions.map((perm: any) => {
-                // Use updated role data if available; otherwise, use original data.
-                const rolePermission =
-                  updatedRoles[role._id]?.permissions.find(
-                    (p: any) => p.name === perm
-                  ) || role.permissions.find((p: any) => p.name === perm);
+          {roles
+            .slice() // Clone array to avoid mutating state
+            .sort((a, b) => {
+              const order = ["Supervisor", "Manager", "Admin"];
+              return order.indexOf(a.name) - order.indexOf(b.name);
+            })
+            .map((role: Role) => (
+              <tr key={role._id} className="border">
+                <td className="border p-2 font-bold">{role.name}</td>
+                {permissions.map((perm: any) => {
+                  const rolePermission =
+                    updatedRoles[role._id]?.permissions.find(
+                      (p: any) => p.name === perm
+                    ) || role.permissions.find((p: any) => p.name === perm);
 
-                return (
-                  <td key={perm} className="border p-2 text-center">
-                    <input
-                      type="checkbox"
-                      checked={rolePermission?.isAllowed || false}
-                      onChange={() => handleCheckboxChange(role._id, perm)}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                  </td>
-                );
-              })}
-              <td className="border p-2 text-center">
-                <button
-                  onClick={() => handleSubmit(role._id)}
-                  disabled={!updatedRoles[role._id]}
-                  className={`px-4 py-2 rounded text-white ${
-                    updatedRoles[role._id]
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-gray-400 cursor-not-allowed"
-                  }`}
-                >
-                  Save
-                </button>
-              </td>
-            </tr>
-          ))}
+                  return (
+                    <td key={perm} className="border p-2 text-center">
+                      <input
+                        type="checkbox"
+                        checked={rolePermission?.isAllowed || false}
+                        onChange={() => handleCheckboxChange(role._id, perm)}
+                        className="h-5 w-5 cursor-pointer"
+                      />
+                    </td>
+                  );
+                })}
+                <td className="border p-2 text-center">
+                  <button
+                    onClick={() => handleSubmit(role._id)}
+                    disabled={!updatedRoles[role._id]}
+                    className={`px-4 py-2 rounded text-white ${
+                      updatedRoles[role._id]
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    Save
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

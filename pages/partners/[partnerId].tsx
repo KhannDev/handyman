@@ -1,22 +1,28 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function PartnerDetails() {
   const router = useRouter();
   const { partnerId: id } = router.query;
   const [partner, setPartner] = useState<any>(null);
+  const [statusTracker, setStatusTracker] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const axios = useAxiosPrivate();
+
   useEffect(() => {
     if (id) {
       axios
         .get(`/partners/${id}`)
         .then((response) => {
-          setPartner(response.data);
+          const partnerData = response.data;
+          console.log("Partner Data:", partnerData);
+          setPartner(partnerData);
+          const trackerData = partnerData.statusTracker || [];
+          console.log("Status Tracker Data:", trackerData);
+          setStatusTracker(trackerData);
           setLoading(false);
         })
         .catch((error) => {
@@ -26,12 +32,17 @@ export default function PartnerDetails() {
     }
   }, [id]);
 
-  const handleApprove = () => {
+  const handleApprove = (status: string) => {
     if (!id) return;
     axios
-      .post(`/admin/updatePartner/${id}`, { isVerified: true })
+      .post(`/admin/updatePartner/${id}`, { status })
       .then(() => {
-        setPartner((prev: any) => ({ ...prev, isVerified: true }));
+        setPartner((prev: any) => ({ ...prev, status: status }));
+        axios.get(`/partners/${id}`).then((response) => {
+          const trackerData = response.data.statusTracker || [];
+          console.log("Updated Status Tracker:", trackerData);
+          setStatusTracker(trackerData);
+        });
       })
       .catch((error) => {
         console.error("Failed to approve partner:", error);
@@ -42,16 +53,37 @@ export default function PartnerDetails() {
   if (!partner)
     return <p className="text-center text-red-500">Partner not found</p>;
 
+  const hasStatusTrackerData =
+    statusTracker.length > 0 &&
+    statusTracker.some((tracker) => tracker.status && tracker.createdAt);
+  console.log("Partner Status:", partner.status); // Debug: Check status value
+
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Partner Details</h1>
-        {!partner.isVerified && (
+        {(partner.status === "Review" || partner.status === "Disabled") && (
+          <div className="flex gap-x-4 justify-center">
+            <button
+              onClick={() => handleApprove("Accepted")}
+              className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() => handleApprove("Rejected")}
+              className="px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition" // Fixed hover color
+            >
+              Reject
+            </button>
+          </div>
+        )}
+        {partner.status === "Accepted" && (
           <button
-            onClick={handleApprove}
+            onClick={() => handleApprove("Disabled")}
             className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
           >
-            Approve
+            Disable
           </button>
         )}
       </div>
@@ -156,6 +188,43 @@ export default function PartnerDetails() {
           )}
         </div>
       </div>
+
+      {/* Partner Status Tracker Table */}
+      {hasStatusTrackerData && (
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-3">Status Tracker</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="py-2 px-4 border-b text-left">Status</th>
+                  <th className="py-2 px-4 border-b text-left">Updated By</th>
+                  <th className="py-2 px-4 border-b text-left">
+                    Date and Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {statusTracker.map((tracker) => (
+                  <tr key={tracker._id} className="hover:bg-gray-50">
+                    <td className="py-2 px-4 border-b">
+                      {tracker.status || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {tracker.UpdatedBy?.name || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {tracker.createdAt
+                        ? new Date(tracker.createdAt).toLocaleString()
+                        : "N/A"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

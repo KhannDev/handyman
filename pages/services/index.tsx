@@ -63,7 +63,9 @@ export default function Page() {
       <Table.Td>{customer.category.name}</Table.Td>
       <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
 
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
       {hasPermission("edit:services") && (
         <Table.Td>
           <ActionIcon href={`/services/edit/?id=${customer._id}`}>
