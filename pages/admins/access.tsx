@@ -21,6 +21,8 @@ const PermissionsTable = () => {
         const response = await axios.get("/adminRoles"); // Use your actual endpoint here
         const data = response.data;
 
+        console.log(data, "sdfsdfsfdsfd");
+
         if (data.length > 0) {
           setRoles(data);
 
