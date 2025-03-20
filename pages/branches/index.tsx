@@ -22,7 +22,6 @@ export default function Page() {
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const { permissions } = useAuth();
-  console.log("Permissions", permissions);
 
   // Function to check if the user has permission
   const hasPermission = (permissionName: string) => {
@@ -72,18 +71,8 @@ export default function Page() {
       <Table.Td>{customer.status}</Table.Td>
       <Table.Td>{customer.partnerId.name}</Table.Td>
       <Table.Td>{customer.category.name}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("hh:mm A")}</Table.Td>
-      <Table.Td>{customer.approvedBy?.name}</Table.Td>
       <Table.Td>
-        {customer.approvedDate
-          ? dayjs(customer.approvedDate).format("DD-MMM-YYYY")
-          : ""}
-      </Table.Td>
-      <Table.Td>
-        {customer.approvedDate
-          ? dayjs(customer.approvedDate).format("hh:mm A")
-          : ""}
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
       </Table.Td>
     </Table.Tr>
   ));
@@ -122,11 +111,7 @@ export default function Page() {
                   <Table.Th>Status</Table.Th>
                   <Table.Th>Partner Name</Table.Th>
                   <Table.Th>Category</Table.Th>
-                  <Table.Th>Created At(Date)</Table.Th>
-                  <Table.Th>Time</Table.Th>
-                  <Table.Th>Approved By</Table.Th>
-                  <Table.Th>Approval Date</Table.Th>
-                  <Table.Th>Time</Table.Th>
+                  <Table.Th>Created At</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

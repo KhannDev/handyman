@@ -64,8 +64,9 @@ export default function Page() {
       <Table.Td>{customer.mobileNumber}</Table.Td>
       <Table.Td>{customer.status}</Table.Td>
 
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("hh:mm A")}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -100,8 +101,7 @@ export default function Page() {
                   <Table.Th>Email</Table.Th>
                   <Table.Th>Mobile Number</Table.Th>
                   <Table.Th>Status</Table.Th>
-                  <Table.Th>Created At(Date)</Table.Th>
-                  <Table.Th>Time</Table.Th>
+                  <Table.Th>Created At</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

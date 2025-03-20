@@ -12,8 +12,6 @@ export default function Sidebar(props: SidebarProps) {
     setShowSidebar(false);
   }, [pathname]);
 
-  console.log("Permissions", permissions);
-
   // Function to check if the user has permission
   const hasPermission = (permissionName: string) => {
     return permissions?.some(
@@ -29,12 +27,12 @@ export default function Sidebar(props: SidebarProps) {
     >
       <div className="flex h-full w-5/6 min-w-max flex-col overflow-y-scroll bg-gray-100 py-4 md:w-48">
         <div className="flex flex-col gap-4">
-          <MenuItem
+          {/* <MenuItem
             active={pathname === "/"}
             icon="fa-solid fa-gauge"
             title="Overview"
             href="/"
-          />
+          /> */}
 
           {hasPermission("view:admins") && (
             <MenuItem

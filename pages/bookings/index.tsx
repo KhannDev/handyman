@@ -74,6 +74,8 @@ export default function Page() {
         customers: response.data.bookings || [],
         count: response.data.total || 0,
       });
+
+      console.log(response.data.bookings);
     } catch (error: any) {
       console.error("Failed to fetch customers:", error?.data?.message);
       setData({ customers: [], count: 0 });
@@ -109,14 +111,17 @@ export default function Page() {
   const items = data.customers.map((customer: any) => (
     <Table.Tr key={customer._id} onClick={() => handleRowClick(customer._id)}>
       <Table.Td>{customer.bookingId}</Table.Td>
-      <Table.Td>{dayjs(customer.bookedTime).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>{dayjs(customer.bookedTime).format("hh:mm A")}</Table.Td>
-      <Table.Td>{customer.customer.name}</Table.Td>
-      <Table.Td>{customer.partner.name}</Table.Td>
-      <Table.Td>{customer.service.name}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.bookedTime).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
+
+      <Table.Td>{customer.customerId?.name}</Table.Td>
+      <Table.Td>{customer.partnerId?.name}</Table.Td>
+      <Table.Td>{customer.serviceId?.name}</Table.Td>
       <Table.Td>{customer.status}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("DD-MMM-YYYY")}</Table.Td>
-      <Table.Td>{dayjs(customer.createdAt).format("hh:mm A")}</Table.Td>
+      <Table.Td>
+        {dayjs(customer.createdAt).format("DD-MMM-YYYY hh:mm A")}
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -294,14 +299,13 @@ export default function Page() {
               <Table.Head>
                 <Table.Tr>
                   <Table.Th>Booking ID</Table.Th>
-                  <Table.Th>Booking Date</Table.Th>
+
                   <Table.Th>Time</Table.Th>
                   <Table.Th>Customer Name</Table.Th>
                   <Table.Th>Partner Name</Table.Th>
                   <Table.Th>Branch Name</Table.Th>
                   <Table.Th>Status</Table.Th>
-                  <Table.Th>Created At(Date)</Table.Th>
-                  <Table.Th>Time</Table.Th>
+                  <Table.Th>Created At</Table.Th>
                 </Table.Tr>
               </Table.Head>
 

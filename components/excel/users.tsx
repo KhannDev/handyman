@@ -47,7 +47,7 @@ const userExportexcel = (data: any) => {
         Name: user.name,
         MobileNumber: user.mobileNumber,
         Gender: user.gender,
-        CreatedAt: dayjs(user.createdAt).format("DD-MM-YYYY"),
+        CreatedAt: dayjs(user.createdAt).format("DD-MM-YYYY hh:mm A"),
       });
     });
   }

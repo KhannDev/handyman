@@ -14,54 +14,27 @@ const notificationExportExcel = (data: any) => {
   };
   sheet.columns = [
     {
-      header: "Title",
-      key: "Title",
+      header: "Name",
+      key: "name",
       width: 14,
     },
     {
-      header: "Body",
-      key: "Body",
+      header: "Created At",
+      key: "createdAt",
       width: 14,
     },
 
     {
-      header: "Roles",
-      key: "Roles",
+      header: "Created By",
+      key: "createdBy",
       width: 20,
     },
-    {
-      header: "Date",
-      key: "Date",
-      width: 20,
-    },
-    {
-      header: "Time",
-      key: "Time",
-      width: 14,
-    },
-    // {
-    //   header: "End Time",
-    //   key: "EndTime",
-    //   width: 14,
-    // },
-    // {
-    //   header: "Total Duration",
-    //   key: "TotalDuration",
-    //   width: 14,
-    // },
-    // {
-    //   header: "Type",
-    //   key: "Type",
-    //   width: 14,
-    // },
   ];
-  data?.pushNotifications?.map((notification: any) => {
+  data.categories?.map((notification: any) => {
     sheet.addRow({
-      Body: notification.body,
-      Title: notification.title,
-      Date: dayjs(notification.createdAt).format("DD-MM-YYYY"),
-      Time: dayjs(notification.createdAt).format("hh:mm:ss A"),
-      Roles: notification.roles.join("-"),
+      name: notification.name,
+      createdAt: dayjs(notification.createdAt).format("DD-MMM-YYYY hh:mm A"),
+      createdBy: notification.approvedBy?.name,
     });
   });
   workbook.xlsx.writeBuffer().then((data) => {
@@ -71,7 +44,7 @@ const notificationExportExcel = (data: any) => {
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     (anchor.href = url),
-      (anchor.download = "notification.xlsx"),
+      (anchor.download = "Categories.xlsx"),
       anchor.click(),
       window.URL.revokeObjectURL(url);
   });

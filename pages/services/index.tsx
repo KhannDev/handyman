@@ -15,6 +15,8 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import axios from "@/apis/axios";
 import { useAuth } from "@/contexts/AuthContext";
 
+import servicesExportexcel from "@/components/excel/services";
+
 export default function Page() {
   const [data, setData] = useState<any>({ customers: [], count: 0 });
   const [loading, setLoading] = useState(true);
@@ -90,6 +92,15 @@ export default function Page() {
           create={
             hasPermission("edit:services") ? "/services/create" : undefined
           }
+          exportexcel={async () => {
+            const response = await axios.get("/allservices", {
+              params: {
+                page: 1,
+                limit: 1000,
+              },
+            });
+            servicesExportexcel(response.data);
+          }}
         />
 
         <Loading loading={loading}>

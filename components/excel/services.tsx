@@ -1,9 +1,10 @@
 import dayjs from "dayjs";
 import ExcelJS from "exceljs";
 
-const toggleExportexcel = (data: any, name: any, date: any) => {
+const notificationExportExcel = (data: any) => {
+  console.log(data);
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Users");
+  const sheet = workbook.addWorksheet("Notifications");
   sheet.properties.defaultRowHeight = 16;
   sheet.getRow(1).font = {
     name: "Arial",
@@ -13,58 +14,53 @@ const toggleExportexcel = (data: any, name: any, date: any) => {
   };
   sheet.columns = [
     {
-      header: "Date",
-      key: "Date",
-      width: 25,
-    },
-    {
-      header: "Time",
-      key: "Time",
+      header: "Name",
+      key: "name",
       width: 14,
     },
     {
-      header: "Status",
-      key: "Status",
+      header: "Category",
+      key: "category",
+      width: 14,
+    },
+
+    {
+      header: "Created By",
+      key: "createdBy",
+      width: 20,
+    },
+
+    {
+      header: "Active",
+      key: "active",
+      width: 20,
+    },
+    {
+      header: "Created At",
+      key: "createdAt",
       width: 20,
     },
   ];
-
-  if (data) {
-    data.forEach((user: any, index: number, array: any[]) => {
-      const loginStatus = user.status ? "Active" : "Inactive";
-      const isFirstRow = index === 0;
-      const isLastRow = index === array.length - 1;
-      const isFirstElementTrue = array[0]?.status;
-      const isLastElementFalse = !array[array.length - 1]?.status;
-
-      let modifiedLoginStatus = loginStatus;
-
-      // Modify the login status for the first row and last row based on conditions
-      if (isFirstRow && isFirstElementTrue) {
-        modifiedLoginStatus = "Active-Login";
-      } else if (isLastRow && isLastElementFalse) {
-        modifiedLoginStatus = "Inactive-Logout";
-      }
-
-      sheet.addRow({
-        Date: dayjs(user?.createdAt).format("DD-MMM-YYYY"),
-        Time: dayjs(user?.createdAt).format("hh:mm:ss A"),
-        Status: modifiedLoginStatus,
-      });
+  data.data?.map((notification: any) => {
+    sheet.addRow({
+      name: notification.name,
+      category: notification.category.name,
+      createdAt: dayjs(notification.createdAt).format("DD-MMM-YYYY hh:mm A"),
+      createdBy: notification.createdBy?.name,
+      active: notification.isVerified ? "Yes" : "No",
     });
-  }
-
+  });
   workbook.xlsx.writeBuffer().then((data) => {
     const blob = new Blob([data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      type: "application/vnd.openxmlformats-officedocument.spreedsheet.sheet",
     });
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${name}-${date}.xlsx`;
-    anchor.click();
-    window.URL.revokeObjectURL(url);
+    (anchor.href = url),
+      (anchor.download = "Services.xlsx"),
+      anchor.click(),
+      window.URL.revokeObjectURL(url);
   });
 };
 
-export default toggleExportexcel;
+export default notificationExportExcel;

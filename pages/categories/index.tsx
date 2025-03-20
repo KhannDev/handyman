@@ -15,13 +15,14 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import axios from "@/apis/axios";
 import { useAuth } from "@/contexts/AuthContext";
 
+import categoriesExportexcel from "@/components/excel/categories";
+
 export default function Page() {
   const [data, setData] = useState<any>({ categories: [], count: 0 });
   const [loading, setLoading] = useState(true);
   const { page, limit, setPage, setLimit } = usePagination(10);
 
   const { permissions } = useAuth();
-  console.log("Permissions", permissions);
 
   // Function to check if the user has permission
   const hasPermission = (permissionName: string) => {
@@ -96,6 +97,15 @@ export default function Page() {
           }
           refetch={fetchCustomers}
           title={`Categories (${data.count})`}
+          exportexcel={async () => {
+            const response = await axios.get("/categories", {
+              params: {
+                page: 1,
+                limit: 1000,
+              },
+            });
+            categoriesExportexcel(response.data);
+          }}
         />
 
         <Loading loading={loading}>
