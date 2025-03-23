@@ -97,8 +97,8 @@ const bookingsExportExcel = (data: any) => {
           subService.subservice?.name || "";
         dynamicSubServiceData[`ServiceDuration${subIndex}`] =
           subService.serviceDuration || "";
-        dynamicSubServiceData[`ServicePrice${subIndex} BD`] =
-          subService.price || "";
+        dynamicSubServiceData[`ServicePrice${subIndex}`] =
+          subService.price + "BD" || "";
       });
     }
     // Build dynamic data for statusTracker.
