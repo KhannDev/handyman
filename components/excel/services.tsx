@@ -41,6 +41,14 @@ const notificationExportExcel = (data: any) => {
       width: 20,
     },
   ];
+
+  const headerRow = sheet.getRow(1);
+  headerRow.eachCell((cell) => {
+    cell.border = {
+      ...cell.border,
+      bottom: { style: "medium" }, // Thick bottom border under the header row
+    };
+  });
   data.data?.map((notification: any) => {
     sheet.addRow({
       name: notification.name,

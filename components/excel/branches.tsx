@@ -6,6 +6,14 @@ const branchesExportExcel = (data: any) => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("Call-logs");
   sheet.properties.defaultRowHeight = 16;
+
+  const headerRow = sheet.getRow(1);
+  headerRow.eachCell((cell) => {
+    cell.border = {
+      ...cell.border,
+      bottom: { style: "medium" }, // Thick bottom border under the header row
+    };
+  });
   sheet.getRow(1).font = {
     name: "Arial",
     family: 2,

@@ -19,6 +19,7 @@ export default function Page() {
   const [customerList, setCustomerList] = useState<any>([]);
   const [partnerList, setPartnerList] = useState<any>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>("");
+  const [selectedBookingId, setSelectedBookingId] = useState<any>();
   const [selectedPartner, setSelectedPartner] = useState<any>("");
   const [status, setStatus] = useState<any>("");
   const [startDate, setStartDate] = useState<any>("");
@@ -67,6 +68,7 @@ export default function Page() {
           endDate: endDate || undefined,
           category: selectedCategory || undefined,
           serviceId: selectedService || undefined,
+          bookingId: selectedBookingId || undefined,
         },
       });
 
@@ -178,6 +180,14 @@ export default function Page() {
         />
 
         <div className="flex flex-wrap gap-4">
+          <input
+            type="text"
+            value={selectedBookingId}
+            onChange={(e) => setSelectedBookingId(e.target.value)}
+            placeholder="Enter Booking ID"
+            className="rounded border p-2"
+          />
+
           {/* Customer Dropdown */}
           <select
             value={selectedCustomer}

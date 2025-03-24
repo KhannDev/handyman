@@ -4,6 +4,12 @@ import ExcelJS from "exceljs";
 const partnerExportexcel = (data: any) => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("Users");
+  sheet.getRow(1).font = {
+    name: "Arial",
+    family: 2,
+    size: 12,
+    bold: true,
+  };
   sheet.properties.defaultRowHeight = 16;
 
   let columns = [
@@ -14,6 +20,14 @@ const partnerExportexcel = (data: any) => {
     { header: "Current Address", key: "currentAddress", width: 18 },
     { header: "Status", key: "status", width: 15 },
   ];
+
+  const headerRow = sheet.getRow(1);
+  headerRow.eachCell((cell) => {
+    cell.border = {
+      ...cell.border,
+      bottom: { style: "medium" }, // Thick bottom border under the header row
+    };
+  });
 
   // Determine max services and subservices dynamically
   const maxServices = Math.max(...data.map((p: any) => p.services.length), 0);
