@@ -8,8 +8,9 @@ import UploadImage from "@/components/form/ImageInput";
 import PageHeader from "@/components/layout/PageHeader";
 import TextInput from "@/components/form/TextInput";
 import useForm from "@/hooks/useForm";
-import axios from "@/apis/axios";
+// import axios from "@/apis/axios";
 import { docsUpload } from "@/apis/query";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function Page() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function Page() {
       name: "",
     },
   });
+
+  const axios = useAxiosPrivate();
 
   const handleSubmit = async (data: any) => {
     try {
@@ -38,7 +41,7 @@ export default function Page() {
       console.log(imageUrl);
 
       // Then create the category with the image URL
-      const response = await axios.post("/categories", {
+      const response = await axios.post("admin/createCategory", {
         name: data.name,
         imageUrl: imageUrl,
         isActive: true,

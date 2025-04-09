@@ -62,7 +62,7 @@ export default function Page() {
     <Table.Tr key={customer.id}>
       <Table.Td>{customer.name}</Table.Td>
       <Table.Td>{customer.category.name}</Table.Td>
-      <Table.Td>{customer?.createdBy?.name}</Table.Td>
+      <Table.Td>{customer?.approvedBy?.name}</Table.Td>
       <Table.Td>{customer.isVerified ? "Yes" : "No"}</Table.Td>
 
       <Table.Td>
