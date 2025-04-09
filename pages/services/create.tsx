@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "@/apis/axios";
+
 import { toast } from "react-toastify";
 import Button from "@/components/form/Button";
 import Head from "next/head";
@@ -8,6 +8,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import TextInput from "@/components/form/TextInput";
 import useForm from "@/hooks/useForm";
 import Select from "@/components/form/Select";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function Page() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function Page() {
 
   const CreateService = async (data: any) => {
     setLoading(true);
+
+    const axios = useAxiosPrivate();
 
     console.log(data);
     try {
