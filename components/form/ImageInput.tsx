@@ -1,11 +1,9 @@
 // UploadImage.tsx
 import { useRef, useState, useEffect } from "react";
-import axios from "@/apis/axios";
-import { docsUpload } from "@/apis/query";
 
 type UploadImageProps = {
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: File | string | null;
+  onChange?: (value: File | null) => void;
   disabled?: boolean;
 };
 
@@ -15,9 +13,8 @@ export default function UploadImage({
   disabled = false,
 }: UploadImageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadUrl, setUploadUrl] = useState<string | null>(value || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
 
   // Trigger file selection when the upload area is clicked
   const handleClick = () => {
@@ -26,34 +23,37 @@ export default function UploadImage({
     }
   };
 
-  // Handle file selection and upload using docsUpload
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = ""; // reset input so the same file can be reselected if needed
 
-    // Extract file details
-    const fileName = file.name;
-    const fileExtension = fileName.split(".").pop() || "";
-    const name = "exampleName"; // Adjust as needed or pass as a prop
-
-    try {
-      setUploading(true);
-      const url = await docsUpload(name, fileName, fileExtension, file);
-      setUploadUrl(url);
-      if (onChange) onChange(url);
-    } catch (err: any) {
-      setError(err.message || "Error uploading file");
-    } finally {
-      setUploading(false);
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
     }
+
+    // Create preview URL
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+
+    // Pass the file to the parent
+    if (onChange) onChange(file);
   };
 
-  // Update the internal state if parent's value changes
+  // Update the preview if value changes
   useEffect(() => {
-    if (value !== uploadUrl) {
-      setUploadUrl(value || null);
+    if (value instanceof File) {
+      const url = URL.createObjectURL(value);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (typeof value === "string") {
+      setPreviewUrl(value);
+    } else {
+      setPreviewUrl(null);
     }
   }, [value]);
 
@@ -66,16 +66,16 @@ export default function UploadImage({
           disabled ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
-        {uploadUrl ? (
-          // Display the uploaded image
+        {previewUrl ? (
+          // Display the preview image
           <img
-            src={uploadUrl}
-            alt="Uploaded File"
+            src={previewUrl}
+            alt="Preview"
             className="object-contain w-full h-full"
           />
         ) : (
           <p className="text-gray-700 text-lg">
-            {uploading ? "Uploading..." : "Click here to upload a picture"}
+            Click here to upload a picture
           </p>
         )}
         {/* Optional overlay for hover feedback */}

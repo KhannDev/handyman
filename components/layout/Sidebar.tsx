@@ -60,20 +60,22 @@ export default function Sidebar(props: SidebarProps) {
               active={pathname.includes("/partners")}
             />
           )}
-          {hasPermission("view:branches") && (
-            <MenuItem
-              title="Branches"
-              icon="fa-solid fa-building"
-              href="/branches"
-              active={pathname.includes("/branches")}
-            />
-          )}
+
           {hasPermission("view:categories") && (
             <MenuItem
               title="Categories"
               icon="fa-solid fa-list"
               href="/categories"
               active={pathname.includes("/categories")}
+            />
+          )}
+
+          {hasPermission("view:branches") && (
+            <MenuItem
+              title="Branches"
+              icon="fa-solid fa-building"
+              href="/branches"
+              active={pathname.includes("/branches")}
             />
           )}
 
