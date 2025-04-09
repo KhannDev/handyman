@@ -15,6 +15,8 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
 
+  const axios = useAxiosPrivate();
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -29,8 +31,6 @@ export default function Page() {
 
   const CreateService = async (data: any) => {
     setLoading(true);
-
-    const axios = useAxiosPrivate();
 
     console.log(data);
     try {
